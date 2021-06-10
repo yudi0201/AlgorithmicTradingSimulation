@@ -30,22 +30,22 @@ if __name__ == "__main__":
         .option("path", "./data/streams")\
         .schema(schema)\
         .load()
-    
-    Df1.cache()
 
     withTime = Df1.withColumn("DateTime", unix_timestamp('Date', 'yyyy-MM-dd').cast('timestamp')) # add a timestamp column because streaming window aggregation requires timestamp type
 
     # User-defined aggregate function that calculates two moving averages, one for the past 10 days, another for the past 20 days
     @pandas_udf("Stock string, ResultDate date, 10_day_MA double, 20_day_MA double", functionType=PandasUDFType.GROUPED_MAP)
     def ma(pdf):
-        cutoff_date = pdf["DateTime"].max() - pd.Timedelta(days=10)
-        pdf1 = pdf[pdf['DateTime'] > cutoff_date] 
-        return pd.DataFrame([[pdf['Name'].iloc[0], pdf['DateTime'].max().date(), pdf1['Close'].mean(), pdf['Close'].mean()]], \
+        curr_datetime = pdf["DateTime"].iloc[-1]
+        cutoff_date = curr_datetime - pd.Timedelta(days=10)
+        #pdf1 = pdf[pdf['DateTime'] > cutoff_date]
+        pdf1 = pdf.iloc[pdf["DateTime"].searchsorted(value = cutoff_date):] #more efficient implementation 
+        return pd.DataFrame([[pdf['Name'].iloc[0], curr_datetime.date(), pdf1['Close'].mean(), pdf['Close'].mean()]], \
             columns = ['Stock', 'ResultDate', '10_day_MA', '20_day_MA'])
 
     
     movingAverage = withTime.withWatermark('DateTime', "0.001 seconds")\
-        .groupBy(window(col('DateTime'), "20 days", "1 day"), col('Name'))\
+        .groupBy(col('Name'), window(col('DateTime'), "20 days", "1 day"))\
                 .apply(ma)
                     #.orderBy(col('ResultDate'))
 
