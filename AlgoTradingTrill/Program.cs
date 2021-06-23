@@ -40,7 +40,7 @@ namespace AlgoTradingTrill
             public IDisposable Subscribe(IObserver<StockPriceDaily> observer)
             {
                 //using (var reader = new StreamReader(@"C:\Users\yudis\Documents\university\Summer2021\Code\pysparkPrograms\all_stock_UNIX_sorted.csv"))
-                using (var reader = new StreamReader(@"/root/AlgorithmicTradingSimulation/50_thousand_stock_UNIX.csv"))
+                using (var reader = new StreamReader(@"/root/AlgorithmicTradingSimulation/100_thousand_stock_UNIX.csv"))
                 {
                     reader.ReadLine();
                     while (!reader.EndOfStream)
