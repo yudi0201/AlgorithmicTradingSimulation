@@ -90,14 +90,12 @@ namespace AlgoTradingTrill
             //    stockRecordObservable.Select(e => StreamEvent.CreateInterval(e.Date, e.Date + 86400, e))
             //        .ToStreamable(DisorderPolicy.Drop());
             
+            var sw = new Stopwatch();
+            sw.Start();
             
             var stockRecordObservable = new MyObservable();
             var stockRecordStreamable =
-                stockRecordObservable.ToTemporalStreamable(e => e.Date, e => e.Date + 86400)
-                    .Cache();
-
-            var sw = new Stopwatch();
-            sw.Start();
+                stockRecordObservable.ToTemporalStreamable(e => e.Date, e => e.Date + 86400);
             
             var allPrices =
                 stockRecordStreamable.Select(e => new{e.Open, e.High, e.Low, e.Close, e.Name});
