@@ -40,7 +40,7 @@ namespace AlgoTradingTrill
             public IDisposable Subscribe(IObserver<StockPriceDaily> observer)
             {
                 //using (var reader = new StreamReader(@"C:\Users\yudis\Documents\university\Summer2021\Code\AlgorithmicTradingSimulation\data\100_thousand_stock_UNIX_sorted.csv"))
-                using (var reader = new StreamReader(@"/root/AlgorithmicTradingSimulation/data/100_thousand_stock_UNIX_sorted.csv"))
+                using (var reader = new StreamReader(@"/AlgorithmicTradingSimulation/data/10_million_stock_UNIX_sorted.csv"))
                 {
                     reader.ReadLine();
                     while (!reader.EndOfStream)
@@ -102,9 +102,9 @@ namespace AlgoTradingTrill
 
             var movingAverages = stockRecordStreamable.GroupApply(e => e.Name,
                 s => s.Multicast(
-                    t => t.HoppingWindowLifetime(4320000, 86400)
+                    t => t.HoppingWindowLifetime(50, 1)
                         .Average(e => e.Close).Join(t
-                                .HoppingWindowLifetime(1728000, 86400).Average(e => e.Close),
+                                .HoppingWindowLifetime(20, 1).Average(e => e.Close),
                             (ma50, ma20) => new {ma50, ma20})),
                 (g, p) => new {name = g.Key, averages = p}
             );

@@ -78,7 +78,7 @@ public class Algo_trading {
 
             try   
             {  
-                BufferedReader br = new BufferedReader(new FileReader("./data/100_thousand_stock_UNIX_sorted.csv")); 
+                BufferedReader br = new BufferedReader(new FileReader("./data/10_million_stock_UNIX_sorted.csv")); 
                 br.readLine(); 
                 while ((line = br.readLine()) != null)   
                 {  
