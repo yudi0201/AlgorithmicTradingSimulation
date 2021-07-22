@@ -39,8 +39,8 @@ namespace AlgoTradingTrill
         {
             public IDisposable Subscribe(IObserver<StockPriceDaily> observer)
             {
-                //using (var reader = new StreamReader(@"C:\Users\yudis\Documents\university\Summer2021\Code\AlgorithmicTradingSimulation\data\100_thousand_stock_UNIX_sorted.csv"))
-                using (var reader = new StreamReader(@"AlgorithmicTradingSimulation/data/10_million_stock_UNIX_sorted.csv"))
+                using (var reader = new StreamReader(@"C:\Users\yudis\Documents\university\Summer2021\Code\AlgorithmicTradingSimulation\data\10_million_stock_UNIX_sorted.csv"))
+                //using (var reader = new StreamReader(@"AlgorithmicTradingSimulation/data/10_million_stock_UNIX_sorted.csv"))
                 {
                     reader.ReadLine();
                     while (!reader.EndOfStream)
@@ -95,7 +95,7 @@ namespace AlgoTradingTrill
             
             var stockRecordObservable = new MyObservable();
             var stockRecordStreamable =
-                stockRecordObservable.ToTemporalStreamable(e => e.Date, e => e.Date + 86400);
+                stockRecordObservable.ToTemporalStreamable(e => e.Date, e => e.Date + 1);
             
             var allPrices =
                 stockRecordStreamable.Select(e => new{e.Open, e.High, e.Low, e.Close, e.Name});
