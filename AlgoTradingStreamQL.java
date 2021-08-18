@@ -8,7 +8,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;  
 import java.io.IOException; 
 
-public class Algo_trading {
+public class AlgoTradingStreamQL {
     static class Stock_data{
         private long date;
         private double open;
