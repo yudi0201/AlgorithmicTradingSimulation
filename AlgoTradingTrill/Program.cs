@@ -39,8 +39,8 @@ namespace AlgoTradingTrill
         {
             public IDisposable Subscribe(IObserver<StockPriceDaily> observer)
             {
-                using (var reader = new StreamReader(@"C:\Users\yudis\Documents\university\Summer2021\Code\AlgorithmicTradingSimulation\data\10_million_stock_UNIX_sorted.csv"))
-                //using (var reader = new StreamReader(@"AlgorithmicTradingSimulation/data/10_million_stock_UNIX_sorted.csv"))
+                //using (var reader = new StreamReader(@"C:\Users\yudis\Documents\university\Summer2021\Code\AlgorithmicTradingSimulation\data\10_million_stock_UNIX_sorted.csv"))
+                using (var reader = new StreamReader(@"AlgorithmicTradingSimulation/data/100_thousand_stock_UNIX_single_firm.csv"))
                 {
                     reader.ReadLine();
                     while (!reader.EndOfStream)
@@ -97,19 +97,16 @@ namespace AlgoTradingTrill
             var stockRecordStreamable =
                 stockRecordObservable.ToTemporalStreamable(e => e.Date, e => e.Date + 1);
             
-            var allPrices =
-                stockRecordStreamable.Select(e => new{e.Open, e.High, e.Low, e.Close, e.Name});
+            //var allPrices =
+            //    stockRecordStreamable.Select(e => new{e.Open, e.High, e.Low, e.Close, e.Name});
 
-            var movingAverages = stockRecordStreamable.GroupApply(e => e.Name,
-                s => s.Multicast(
+            var movingAverages = stockRecordStreamable.Multicast(
                     t => t.HoppingWindowLifetime(50, 1)
                         .Average(e => e.Close).Join(t
                                 .HoppingWindowLifetime(20, 1).Average(e => e.Close),
-                            (ma50, ma20) => new {ma50, ma20})),
-                (g, p) => new {name = g.Key, averages = p}
-            );
+                            (ma50, ma20) => new {ma50, ma20}));
 
-            var result = movingAverages.Multicast(s => s.Join(s.Select(e => e.averages.ma20 > e.averages.ma50),
+            var result = movingAverages.Multicast(s => s.Join(s.Select(e => e.ma20 > e.ma50),
                 (left, buy) => new {left, buy}));
                
             
